@@ -1,3 +1,2 @@
 all:
-	g++ main.cpp -o dsh
-	./dsh
+	g++ src/main.cpp -o dsh
