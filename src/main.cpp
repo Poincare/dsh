@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include <unistd.h>
 
@@ -14,43 +15,58 @@ using namespace std;
 string SYMBOL = "$";
 int complete = 0;
 
-void CommandOpts::execute() {
-    
-}
+void fillCOObject(string command, vector<string> opts, CommandOpts &co);
 
-void readLine(char *line) {
-    cin.getline(line, MAX_LEN);
+//read command line from STDIN, and fill out object
+void fillCO(CommandOpts &toFill) {
+    string command;
+    vector<string> opts;
+
+    string entireLine;
+
+    getline (cin, entireLine);
+    stringstream lineParser;
     
-    if(!cin) {
-        complete = 1;
-        return;
+    lineParser.clear();
+    lineParser.str("");
+    lineParser << entireLine;
+
+    lineParser >> command;
+
+    string opt;
+
+    //parse the line that just came in
+    while(lineParser >> opt) {
+        cout << "Reading" << endl;
+
+        lineParser >> opt;
+        opts.push_back(opt); 
     }
+
+    //fill out object with the stuff we just got
+    fillCOObject(command, opts, toFill);
 }
 
+//write the shell symbol; currently defaulted to $
+//TODO give options for symbols
 void writeSymbol() {
     cout << SYMBOL << " ";
 }
 
-CommandOpts fillCO(char *line) {
-    string command;
-    vector<string> opts;
-
-    CommandOpts co;
+//Fill out CommandOpts object
+//TODO don't use vector<string>
+void fillCOObject(string command, vector<string> opts, CommandOpts &co) {
     co.command = command;
     co.opts = opts;
-
-    return co;
 }
  
 void iterate(void) {
-    char line[MAX_LEN];
+    CommandOpts COs;
 
     writeSymbol();
     
-    readLine(line);
+    fillCO(COs);
 
-    CommandOpts COs = fillCO(line);
-    
     if(!complete) {
         COs.execute();
     }

@@ -8,4 +8,7 @@ class CommandOpts {
         vector<string> opts;
   
         void execute(void);
+
+    private:
+        void execv(string command, char **args);
 };
